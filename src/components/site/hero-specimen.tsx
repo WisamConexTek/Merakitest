@@ -86,7 +86,7 @@ const SLIDES: Slide[] = [
   },
   {
     kick: 'Security operations',
-    head: ['The people who stay up.', 'Your 24/7 MSSP.'],
+    head: ['The people', 'who stay up. 24/7 MSSP.'],
     lede:
       'Managed cybersecurity detection, triage and response across all four layers, run by the engineers who designed the environment — which is why they can tell odd from wrong.',
     card: {
@@ -172,10 +172,12 @@ export function HeroSpecimen() {
           {/* aria-live tells a screen reader the copy changed underneath it,
               which an autoplaying slider otherwise hides completely */}
           <div aria-live="polite" aria-atomic="true">
-            <h1 className="font-display-xl mt-6 text-[clamp(2.2rem,4.4vw,3.5rem)] text-graphite">
-              <span className="block">{slide.head[0]}</span>
-              <span className="block">{slide.head[1]}</span>
-            </h1>
+            <div className="mt-6 min-h-[5.5rem] sm:min-h-[7rem]">
+              <h1 className="font-display-xl text-[clamp(2.2rem,4.4vw,3.5rem)] text-graphite">
+                <span className="block">{slide.head[0]}</span>
+                <span className="block">{slide.head[1]}</span>
+              </h1>
+            </div>
             {/* ── Why this box has a fixed height ──
                 The three ledes are not the same length — slide one runs to
                 four lines, the other two wrap at three — and this paragraph
