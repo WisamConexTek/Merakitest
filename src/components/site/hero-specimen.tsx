@@ -172,8 +172,8 @@ export function HeroSpecimen() {
           {/* aria-live tells a screen reader the copy changed underneath it,
               which an autoplaying slider otherwise hides completely */}
           <div aria-live="polite" aria-atomic="true">
-            <div className="mt-6 min-h-[5.5rem] sm:min-h-[7rem]">
-              <h1 className="font-display-xl text-[clamp(2.2rem,4.4vw,3.5rem)] text-graphite">
+            <div className="mt-6 h-[7rem] sm:h-[8.5rem] relative">
+              <h1 className="font-display-xl absolute top-0 text-[clamp(2.2rem,4.4vw,3.5rem)] text-graphite">
                 <span className="block">{slide.head[0]}</span>
                 <span className="block">{slide.head[1]}</span>
               </h1>
