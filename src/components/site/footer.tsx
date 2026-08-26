@@ -128,6 +128,21 @@ export function Footer() {
           <p className="font-mono-ui text-[12px] text-graphite-3">
             © {new Date().getFullYear()} {t('brandName')}. {t('footerRights')}
           </p>
+          <div className="flex flex-wrap gap-7">
+            {[
+              { href: '/privacy', label: t('footerPrivacy') },
+              { href: '/terms', label: t('footerTerms') },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="group inline-flex items-center gap-1.5 text-[13px] text-graphite-3 transition-colors duration-400 hover:text-violet"
+              >
+                {l.label}
+                <ArrowUpRight className="size-3 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </footer>
