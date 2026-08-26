@@ -8,6 +8,15 @@ export const metadata: Metadata = {
   title: 'Managed Security — Meraki-IT',
   description:
     'Meraki-IT is the managed security service provider for AttackMetricX, Cloudflare and Acronis — continuous monitoring, triage and response across the whole stack, with one contract and one escalation path.',
+  alternates: {
+    canonical: '/security',
+  },
+  openGraph: {
+    title: 'Managed Security — Meraki-IT',
+    description:
+      'Meraki-IT is the managed security service provider for AttackMetricX, Cloudflare and Acronis — continuous monitoring, triage and response across the whole stack, with one contract and one escalation path.',
+    url: '/security',
+  },
 }
 
 export default function SecurityRoute() {

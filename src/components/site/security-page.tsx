@@ -357,7 +357,7 @@ export function SecurityPage() {
             </span>
           </Reveal>
           <h2 className="font-display-xl mt-8 max-w-3xl text-[clamp(2rem,4.6vw,3.2rem)] text-graphite">
-            What we are actually watching, layer by layer.
+            Managed Security Services: What we are actually watching, layer by layer.
           </h2>
 
           <div className="mt-14 grid gap-12 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)] lg:gap-16">
@@ -439,7 +439,7 @@ export function SecurityPage() {
             <span className="font-mono-ui text-[11px] uppercase tracking-[0.2em] text-graphite-3">Response</span>
           </Reveal>
           <h2 className="font-display-xl mt-8 max-w-3xl text-[clamp(2rem,4.6vw,3.2rem)] text-graphite">
-            What happens when something fires.
+            Incident Response: What happens when something fires.
           </h2>
 
           <ol className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

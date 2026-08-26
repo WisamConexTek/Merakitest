@@ -4,8 +4,11 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
-import { Menu, X, ArrowUpRight, Phone } from 'lucide-react'
+import { Menu, X, ArrowUpRight, Phone, ChevronDown } from 'lucide-react'
 import { useLang, COMPANY, type TKey } from '@/lib/i18n'
+import { SERVICES_DATA, SERVICE_CATEGORY_MAP, CATEGORY_LABELS, type ServiceCategory } from '@/lib/services-data'
+import { SERVICE_ICON_MAP } from '@/lib/service-icons'
+import { LAYER_SOLID } from './iso'
 import { MerakiLogo } from './logo'
 import { cn } from '@/lib/utils'
 
@@ -49,6 +52,16 @@ const NAV_LINKS: { href: string; key: TKey }[] = [
   { href: '/contact', key: 'navContact' },
 ]
 
+const CATEGORY_ORDER: ServiceCategory[] = ['build', 'secure', 'run']
+
+/* Grouped once at module scope rather than on every render — the source
+   list does not change while the app is running. */
+const SERVICES_BY_CATEGORY = CATEGORY_ORDER.map((category) => ({
+  category,
+  label: CATEGORY_LABELS[category],
+  services: SERVICES_DATA.filter((s) => SERVICE_CATEGORY_MAP[s.slug] === category),
+}))
+
 /* How far you have to travel in one direction before the bar agrees */
 const FLIP = 46
 /* Below this the bar is always shown in its resting state */
@@ -72,6 +85,28 @@ export function Header() {
   const [collapsed, setCollapsed] = useState(false)
   const [condensed, setCondensed] = useState(false)
   const [open, setOpen] = useState(false)
+
+  /* The Services mega-menu. A hover-close is deferred a beat so crossing
+     the small visual gap between the trigger and the panel below it does
+     not read as leaving — without the delay, the panel closes itself out
+     from under the pointer on the way down to it. */
+  const [servicesOpen, setServicesOpen] = useState(false)
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const servicesRef = useRef<HTMLDivElement>(null)
+
+  const openServices = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current)
+    setServicesOpen(true)
+  }
+  const closeServicesSoon = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current)
+    closeTimer.current = setTimeout(() => setServicesOpen(false), 180)
+  }
+  /* Keyboard users tab through; a blur that lands OUTSIDE this wrapper is a
+     real exit, one that lands on a child (moving between menu items) is not. */
+  const onServicesBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+    if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setServicesOpen(false)
+  }
 
   const lastY = useRef(0)
   const travel = useRef(0)
@@ -124,6 +159,37 @@ export function Header() {
     }
   }, [open])
 
+  useEffect(() => {
+    if (!servicesOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setServicesOpen(false)
+    }
+    /* The panel is `position: fixed`, so it sits visually apart from the
+       trigger — but it is still a DOM child of the same wrapper, which is
+       what lets one `contains` check cover both trigger and panel. */
+    const onPointerDown = (e: PointerEvent) => {
+      if (!servicesRef.current?.contains(e.target as Node)) setServicesOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    window.addEventListener('pointerdown', onPointerDown)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      window.removeEventListener('pointerdown', onPointerDown)
+    }
+  }, [servicesOpen])
+
+  /* Route changes should close the menu, but the lint rule for effects is
+     right to be suspicious of an unconditional setState here — this guards
+     it with a ref so the call only fires on an actual navigation, never as
+     a same-pathname re-render. */
+  const lastPath = useRef(pathname)
+  useEffect(() => {
+    if (lastPath.current !== pathname) {
+      lastPath.current = pathname
+      setServicesOpen(false)
+    }
+  }, [pathname])
+
   /* The bar and the parked button both stay put while the panel is up —
      the panel belongs to whichever one opened it, so hiding its own
      trigger would make it look unmoored. */
@@ -175,20 +241,53 @@ export function Header() {
               {/* Always present. Scrolling up is the ask for navigation, so
                   it arrives complete rather than as a stub. */}
               <nav className="hidden shrink-0 items-center gap-0.5 whitespace-nowrap lg:flex">
-                {NAV_LINKS.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                      'rounded-full px-4 py-2 text-[15px] font-medium transition-colors duration-500',
-                      isActive(pathname, link.href)
-                        ? 'text-violet'
-                        : 'text-graphite-2 hover:text-graphite',
-                    )}
-                  >
-                    {t(link.key)}
-                  </Link>
-                ))}
+                {NAV_LINKS.map((link) =>
+                  link.href === '/services' ? (
+                    <div
+                      key={link.href}
+                      ref={servicesRef}
+                      className="relative"
+                      onMouseEnter={openServices}
+                      onMouseLeave={closeServicesSoon}
+                      onFocus={openServices}
+                      onBlur={onServicesBlur}
+                    >
+                      <Link
+                        href={link.href}
+                        aria-haspopup="true"
+                        aria-expanded={servicesOpen}
+                        className={cn(
+                          'flex items-center gap-1 rounded-full px-4 py-2 text-[15px] font-medium transition-colors duration-500',
+                          isActive(pathname, link.href) || servicesOpen
+                            ? 'text-violet'
+                            : 'text-graphite-2 hover:text-graphite',
+                        )}
+                      >
+                        {t(link.key)}
+                        <ChevronDown
+                          className={cn(
+                            'size-3.5 transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]',
+                            servicesOpen && 'rotate-180',
+                          )}
+                        />
+                      </Link>
+                      <ServicesMenu open={servicesOpen} onNavigate={() => setServicesOpen(false)} />
+                    </div>
+                  ) : (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={cn(
+                        'rounded-full px-4 py-2 text-[15px] font-medium transition-colors duration-500',
+                        isActive(pathname, link.href)
+                          ? 'text-violet'
+                          : 'text-graphite-2 hover:text-graphite',
+                      )}
+                    >
+                      {t(link.key)}
+                    </Link>
+                  ),
+                )}
               </nav>
 
               <div className="flex flex-1 items-center justify-end gap-2">
@@ -340,5 +439,94 @@ export function Header() {
       </AnimatePresence>
 
     </>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SERVICES MENU
+
+   Fixed to the viewport and centred under the bar — not anchored
+   to the trigger link — because the trigger's own x-position
+   moves as the bar breathes between its resting and condensed
+   widths. Centring on the bar itself is the one placement that
+   holds steady through every state the header can be in.
+
+   Content is the same three build/secure/run groups the services
+   page itself uses (`SERVICES_BY_CATEGORY`, built once above from
+   the shared data file), so the menu can never list a service the
+   page does not, or describe one differently.
+   ═══════════════════════════════════════════════════════════ */
+
+function ServicesMenu({ open, onNavigate }: { open: boolean; onNavigate: () => void }) {
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0, y: -10, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -10, scale: 0.98 }}
+          transition={{ duration: 0.32, ease: GLIDE }}
+          style={{ transformOrigin: 'top center' }}
+          className="fixed left-1/2 top-[86px] z-60 w-[min(980px,calc(100vw-3rem))] -translate-x-1/2 overflow-hidden rounded-[26px] bg-white p-7 shadow-[0_4px_8px_rgba(10,12,31,.06),0_24px_56px_rgba(10,12,31,.12),0_60px_120px_rgba(30,30,155,.10)] sm:top-[100px]"
+        >
+          <div className="grid grid-cols-3 gap-8">
+            {SERVICES_BY_CATEGORY.map((group) => (
+              <div key={group.category}>
+                <span className="font-mono-ui block text-[10.5px] uppercase tracking-[0.18em] text-graphite-3">
+                  {group.label}
+                </span>
+                <div className="mt-4 flex flex-col gap-0.5">
+                  {group.services.map((service) => {
+                    const Icon = SERVICE_ICON_MAP[service.iconName]
+                    return (
+                      <Link
+                        key={service.slug}
+                        href={`/services/${service.slug}`}
+                        onClick={onNavigate}
+                        className="group flex items-start gap-3 rounded-2xl px-2.5 py-2.5 transition-colors duration-300 hover:bg-paper"
+                      >
+                        <span
+                          aria-hidden
+                          className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[10px] transition-colors duration-300"
+                          style={{ background: `${LAYER_SOLID[service.layer]}14` }}
+                        >
+                          <Icon
+                            className="size-4"
+                            style={{ color: LAYER_SOLID[service.layer] }}
+                            strokeWidth={1.75}
+                          />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-[14.5px] font-medium leading-tight text-nowrap text-graphite transition-colors duration-300 group-hover:text-violet">
+                            {service.title}
+                          </span>
+                          <span className="mt-1 block truncate text-[12.5px] leading-snug text-graphite-3">
+                            {service.subtitle}
+                          </span>
+                        </span>
+                      </Link>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 flex items-center justify-between border-t border-graphite/8 pt-5">
+            <span className="text-[13px] text-graphite-3">
+              Eight services, four layers — one team across all of them.
+            </span>
+            <Link
+              href="/services"
+              onClick={onNavigate}
+              className="group flex items-center gap-2 rounded-full bg-paper px-4 py-2 text-[13.5px] font-medium text-graphite transition-colors duration-300 hover:bg-graphite hover:text-white"
+            >
+              View all services
+              <ArrowUpRight className="size-3.5 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }

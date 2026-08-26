@@ -1,9 +1,16 @@
 import { SiteShell } from '@/components/site/shell'
-import { HeroOrigin } from '@/components/site/hero-origin'
+import { HeroSpecimen } from '@/components/site/hero-specimen'
 import { ServicesSection } from '@/components/site/services-section'
 import { Perimeter } from '@/components/site/perimeter'
 import { Partners } from '@/components/site/partners'
 import { Differentiators, ContactCta } from '@/components/site/differentiators'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: '/',
+  },
+}
 
 export default function Home() {
   /* The page is a numbered sequence and the sections say so: 01 the stack,
@@ -15,7 +22,7 @@ export default function Home() {
      weight; if a third arrives, one of these should go. */
   return (
     <SiteShell>
-      <HeroOrigin />
+      <HeroSpecimen />
       <ServicesSection />
       <Perimeter />
       <Partners />

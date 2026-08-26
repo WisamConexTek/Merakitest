@@ -7,6 +7,15 @@ export const metadata: Metadata = {
   title: 'About — Meraki-IT',
   description:
     'Founded in 2008, Meraki-IT brings over 50 years of combined expertise to designing innovative, economical technology solutions — built around data that stays reliable, recoverable and secure.',
+  alternates: {
+    canonical: '/about',
+  },
+  openGraph: {
+    title: 'About — Meraki-IT',
+    description:
+      'Founded in 2008, Meraki-IT brings over 50 years of combined expertise to designing innovative, economical technology solutions — built around data that stays reliable, recoverable and secure.',
+    url: '/about',
+  },
 }
 
 export default function AboutPage() {

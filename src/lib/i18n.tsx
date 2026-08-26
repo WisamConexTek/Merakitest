@@ -42,10 +42,10 @@ export const dict = {
     'Every engagement starts with the same question: which layer is costing you the most, right now?',
 
   /* ─── Partners ─── */
-  partnersKicker: 'The platforms we run on',
-  partnersTitle: 'We do not resell tools. We operate them.',
+  partnersKicker: 'Our Technology Partners',
+  partnersTitle: 'Elite partnerships. Managed by us.',
   partnersLede:
-    'Meraki-IT is the managed security service provider for three platforms, each covering a different layer of the stack. Licensing, tuning, monitoring and response are ours — you get one contract and one escalation path.',
+    'We partner with the industry’s best—AttackMetricX, Cloudflare, and Acronis—to provide enterprise-grade security. As your MSSP, we do not just resell licenses; we architect, tune, and operate these platforms so you get one seamless defense.',
 
   /* ─── Why Meraki ─── */
   whyKicker: 'Why Meraki-IT',

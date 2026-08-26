@@ -6,6 +6,15 @@ export const metadata: Metadata = {
   title: 'Contact — Meraki-IT',
   description:
     'Tell us which layer hurts — an ageing data centre, a network that keeps you up at night, an audit you have to pass. Call (888) 499-9880 or send us the detail.',
+  alternates: {
+    canonical: '/contact',
+  },
+  openGraph: {
+    title: 'Contact — Meraki-IT',
+    description:
+      'Tell us which layer hurts — an ageing data centre, a network that keeps you up at night, an audit you have to pass. Call (888) 499-9880 or send us the detail.',
+    url: '/contact',
+  },
 }
 
 export default function ContactPage() {

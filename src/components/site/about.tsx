@@ -29,12 +29,12 @@ export function About() {
               <span className="font-mono-ui text-[11px] uppercase tracking-[0.2em] text-graphite-3">{t('aboutKicker')}</span>
             </Reveal>
             <h2 className="font-display-xl mt-8 text-[clamp(2rem,4.6vw,3.2rem)] text-graphite">
-              Built by people who have run this before.
+              Built by Managed IT & Security Experts who have run this before.
             </h2>
             <Reveal delay={0.1}>
               <p className="mt-7 max-w-2xl text-[17px] leading-relaxed text-graphite-2">
                 Meraki-IT was founded in 2008 and has spent every year since designing,
-                consolidating and defending infrastructure for businesses that need it to simply
+                consolidating and defending enterprise IT infrastructure and networks for businesses that need it to simply
                 work. The team has done this in enough environments to know which shortcuts cost
                 money later.
               </p>

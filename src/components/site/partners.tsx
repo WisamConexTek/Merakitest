@@ -171,7 +171,7 @@ export function Partners({ showHeading = true }: { showHeading?: boolean } = {})
               </h2>
             ) : (
               <h2 className="font-display-xl mt-8 text-[clamp(1.9rem,4.2vw,3rem)] text-graphite">
-                The three platforms, and who runs them.
+                Our elite technology partners, managed by us.
               </h2>
             )}
           </Reveal>
@@ -194,8 +194,8 @@ export function Partners({ showHeading = true }: { showHeading?: boolean } = {})
         <Reveal delay={0.2}>
           <p className="mt-8 max-w-3xl text-[13px] leading-relaxed text-graphite-3">
             AttackMetricX, Cloudflare and Acronis are trademarks of their respective owners.
-            Meraki-IT is an independent managed security service provider operating these
-            platforms on behalf of its clients.
+            As an independent MSSP, Meraki-IT partners with these industry leaders to operate their 
+            platforms on behalf of our clients.
           </p>
         </Reveal>
 

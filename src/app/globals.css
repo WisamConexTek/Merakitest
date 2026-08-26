@@ -494,7 +494,116 @@
 
    No slack is added on purpose. The hover expansion is MEANT to break out
    of the row, and the card carries a z-index to sit over its neighbours
-   while it does. */
+   while it does.
+
+   ── Why this is a plain pixel value now ──
+   The well used to be an aspect-square, so the card's height depended on
+   the column WIDTH and the percentage-padding trick above was the only way
+   to read that width without JS. The well is a fixed height now (see
+   ServiceTile), so the card's height no longer depends on the column at
+   all — a plain measured pixel number does the same job with none of the
+   indirection. Re-measure this if the well height, card padding, or the
+   text block's fixed height changes. */
 .tile-sizer {
-  padding-bottom: calc(100% + 200px);
+  padding-bottom: 296px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HERO — SPECIMEN CARDS
+
+   Two layouts, and neither one is chosen in JavaScript. Below xl
+   the three samples are a single stack and only the live one is
+   visible; from xl they lay out in a row at the angles they were
+   dropped, and the live one lifts and lies flat.
+
+   Deciding that in the component would mean measuring the
+   viewport in an effect, which mounts the wrong layout for one
+   frame and swaps visibly on first paint. A media query knows
+   before anything renders.
+
+   The stagger is a transform, so it never touches the grid: the
+   three cells stay equal and level whatever the cards do inside
+   them.
+   ═══════════════════════════════════════════════════════════ */
+.spec-stage {
+  position: relative;
+  height: 404px;
+}
+
+.spec-card {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  width: min(94%, 348px);
+  margin-inline: auto;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: var(--lift-2);
+  transition:
+    opacity var(--dur-mid) var(--ease-glide),
+    transform 0.9s var(--ease-glide),
+    box-shadow var(--dur-mid) var(--ease-glide);
+}
+
+.spec-card[data-on='true'] {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 5;
+}
+
+@media (min-width: 1280px) {
+  .spec-stage {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    height: auto;
+    padding: 66px 0 44px;
+  }
+
+  .spec-card {
+    position: relative;
+    inset-inline: auto;
+    top: auto;
+    width: auto;
+    margin-inline: 0;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(var(--drop)) rotate(var(--rot)) scale(0.972);
+  }
+
+  .spec-card[data-on='true'] {
+    transform: translateY(calc(var(--drop) - 22px)) scale(1.05);
+    box-shadow: var(--lift-3);
+  }
+}
+
+/* The five seconds, drawn. The element is keyed on the live index in the
+   component, so React remounts it on every change and the fill restarts —
+   including when a click resets the clock rather than merely advancing it. */
+.spec-fill {
+  transform: scaleX(0);
+}
+
+.spec-fill.is-live {
+  animation: specFill linear forwards;
+}
+
+@keyframes specFill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spec-card {
+    transition: none;
+  }
+  /* Autoplay is already off; the rule shows position without animating. */
+  .spec-fill.is-live {
+    animation: none;
+    transform: scaleX(1);
+  }
 }
